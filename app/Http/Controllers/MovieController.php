@@ -12,17 +12,10 @@ class MovieController extends Controller
      */
     public function index()
     {
-        $movies = MovieModel::all();
-
-        return view('movies', $movies);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $data['movies']= MovieModel::all();
+    
+        return view('movies', $data);
+        //return $data;
     }
 
     /**
@@ -30,38 +23,59 @@ class MovieController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+
+        if(!empty($request->input('name'))  && !empty($request->input('genre'))){
+            $movie = new MovieModel();
+            $movie->name       = $request->input('name');
+            $movie->genre      = $request->input('genre');
+            $movie->save();
+            return 'New movie saved';
+        }
+
+        return 'Please enter the following data: name, genre';
+
+      
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(MovieModel $movieModel)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(MovieModel $movieModel)
-    {
-        //
+    public function show($movie)
+    {   
+        return MovieModel::find($movie);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, MovieModel $movieModel)
-    {
-        //
+    public function update(Request $request, $movie)
+    {   
+        $movie = MovieModel::find($movie);
+
+        if(!$request->input('name')==NULL  || !$request->input('genre')==NULL){
+            if(!empty($request->input('name'))){
+                $movie->name       = $request->input('name');
+                $movie->save();
+            }
+            if(!empty($request->input('genre'))){
+                $movie->genre       = $request->input('genre');
+                $movie->save();
+            }
+            return 'Movie with id: '. $movie->id . ' updated'; 
+        }
+
+        return 'Please enter the following data: name or genre';
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(MovieModel $movieModel)
-    {
-        //
+    public function destroy($movie)
+    {   
+        $movieToDestroy = MovieModel::find($movie);
+        $movieToDestroy->delete();
+
     }
 }
