@@ -1,0 +1,26 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: 164.90.229.181
+          username: bedev2023
+          password: 2023BeDev
+          port: 22
+          script: |
+            cd /var/www/html/Hajdarovic
+            git pull origin main
+            php artisan migrate
+            npm install
+            npm run build
+            composer install
